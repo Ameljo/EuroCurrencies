@@ -22,6 +22,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+//TODO finish the remaining tests
 @RunWith(SpringRunner.class)
 @WebMvcTest(CurrencyController.class)
 public class CurrencyControllerTest {

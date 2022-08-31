@@ -1,5 +1,6 @@
 package com.currency.EuroCurrency.controllers;
 
+import com.currency.EuroCurrency.exceptions.CurrencyNotExistException;
 import com.currency.EuroCurrency.models.Currency;
 import com.currency.EuroCurrency.models.CurrencyDay;
 import com.currency.EuroCurrency.services.CurrencyDayService;
@@ -65,7 +66,7 @@ public class CurrencyController {
      * Formatted in simple text
      */
     @GetMapping(
-            path = "/date")
+            path = "/currenciesByDate")
     public String getCurrenciesByDate(@RequestParam Optional<String> date)
     {
         if (!date.isPresent())
@@ -73,6 +74,8 @@ public class CurrencyController {
         try {
             Date dateToFind = formatter.parse(date.get());
             CurrencyDay currencyDay = currencyDayService.getCurrencyDay(dateToFind);
+            if (currencyDay == null)
+                return "No currencies found for the specified date!";
             StringBuilder sb = new StringBuilder();
             sb.append("Currencies for " + formatter.format(currencyDay.getCurrencyDate()) + ":\n");
             for (Currency currency : currencyDay.getCurrencyList()) {
@@ -110,6 +113,8 @@ public class CurrencyController {
         try {
             Date start = formatter.parse(startDate.get());
             Date end = formatter.parse(endDate.get());
+            if(start.after(end))
+                return "Start date cannot be after End date";
             String currencyToFind = currency.get();
             List<Currency> currencyList = currencyService.getCurrenciesBetweenDates(currencyToFind, start, end);
             if (currencyList.isEmpty())
@@ -235,8 +240,8 @@ public class CurrencyController {
             try {
                 sb.append("Converted " + amount.get() + " " + sourceCurrency.get() + " to " + targetCurrency.get() + " on " + date.get() + ": ");
                 sb.append(currencyService.convertCurrency(sourceCurrency.get(), targetCurrency.get(), convertDate, amount.get()));
-            } catch (Exception e) {
-                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,  "Conversion failed!");
+            } catch (CurrencyNotExistException e) {
+                return e.getMessage();
             }
 
             return sb.toString();

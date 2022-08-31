@@ -35,10 +35,10 @@ public class CurrencyService {
         Currency currency = currencyRepository.findByCurrencyAndDay_currencyDate(sourceCurrency, date);
         Currency currencyToConvertInto = currencyRepository.findByCurrencyAndDay_currencyDate(targetCurrency, date);
         if (currency == null)
-            throw new CurrencyNotExistException("Currency " + sourceCurrency + " does not exist!");
+            throw new CurrencyNotExistException("N/A rate found for currency " + sourceCurrency + " on the given date!");
         if (currencyToConvertInto == null)
 
-            throw new CurrencyNotExistException("Currency " + targetCurrency + " does not exist!");
+            throw new CurrencyNotExistException("N/A rate found for currency " + targetCurrency + " on the given date!");
         Double convertValue = (currency.getValue() * amount) / currencyToConvertInto.getValue();
         return convertValue;
     }
